@@ -1,4 +1,4 @@
-( defvar *Start* )    ;start state of 8-tile puzzle
+;( defvar *Start* )    ;start state of 8-tile puzzle
 
 (defun readPuzzleFile file
 
@@ -14,7 +14,7 @@
 			; usage case: (load '8puzzle) 
 			;             (8puzzle)
 			((= (length args) 1) ;if the user wants to interactively specify the puzzle to solve
-				(fromat t "Please enter a permutation of the digits 0-8, each digit seperated by whitespace; 0 denotes the blank tile.")
+				(fromat t "Please enter a permutation of the digits 0-8, separating each by a space; 0 denotes the blank tile.")
 				(dotimes( i 9 ) (setf puzzle (read)) )  ; do nine reads to get user's input
 				(if ( not ( = (length puzzle) 9))
 					(getPuz args)  ; make recursive call to allow the user to re-enter their puzzle
@@ -24,12 +24,12 @@
 			)
 
 			; usage case: (load '8puzzle) 
-			;             (8puzzle (puzzlelist))
+			;             (8puzzle (puzzlelist)) or (8puzzle file_name )
 			((= (length args) 2)  ; if the user specified a puzzle file or entered a list as a command line argument
 			
-	            (cond 
+	           (cond 
 				
-					((listp (cadr args ))  ; if a list is the second command line argument
+                    ((listp (cadr args ))  ; if a list is the second command line argument
 					
 						(setf puzzle (cadr args) ) ) 		
 						; NEED TO VALIDATE PUZZLE
