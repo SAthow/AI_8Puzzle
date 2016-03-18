@@ -2,7 +2,7 @@
 ;(print 1)
 (defun readPuzzleFile 'file T )
 
-(setf args (list 1 ) )
+(setf args (list 1 2 3 ) )
 (print (length args ) )
 (print 2)
 (defun getPuz(args)
@@ -50,4 +50,5 @@
 			(t   (printUsage) )
 )))
 
+(getPuz args)
 (print 6)
