@@ -48,10 +48,15 @@
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
 			(OPEN (list curNode))                           ; OPEN list:    ((start nil))
 			(CLOSED nil)                                    ; CLOSED list:  ( )
+			(let (depth-count 0 ) )							; depth count for DFID
 		)
 
 		; termination condition - return solution path when goal is found
-		((goal-state? (node-state curNode)) (build-solution curNode CLOSED))
+		; or return from DFS for DFID
+		( cond
+			((goal-state? (node-state curNode)) (build-solution curNode CLOSED))
+			( if (equal dept-count depth) (return nil) )
+		)
 
 		; loop body
 		(when (null OPEN) (return nil))   		          	; no solution
@@ -85,25 +90,26 @@
 				)
 			)
 		)
+		(1+ depth-count)
 	)
 )
 
 ;------------------------------------------------------------------------------
 ; DFID 
 ;------------------------------------------------------------------------------
-(defun search_dfid (start type)
+(defun search_dfid (start)
 
 	(let (depth 1) (answer nil) )			; restrict the depth of the dfs search
 											; set answer
 
 	; while no solution found, increase depth
-	(do (depth 1 (1+ depth)
+	(do* (depth 1 (1+ depth)
 	
 		; run dfs
 		(setf answer search_bfs_dfs( start 'dfs depth ) )
 
 		; if solution found, return answer
-		(if answer 'done ) ) 
+		(if answer (return answer) ) ) 
 	)
 )
 
