@@ -20,7 +20,7 @@
  | Written Spring 2016 for CSC447/547 AI class.
  |
  | Modifications:
- |
+ |	22 March 2016, Stephanie Athow: added a Depth-First-Iterated-Deepening option
  | 
  |#
 
@@ -37,10 +37,12 @@
 ; Depth-first-search implements the OPEN list as a STACK of (state parent) nodes.
 	(defun dfs (start) (search_bfs_dfs start 'dfs))
 
+; Depth-First-Iterated-Deepening runs dfs to a specified depth
+
 ; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
 ;------------------------------------------------------------------------------
 
-(defun search_bfs_dfs (start type)
+(defun search_bfs_dfs (start type &optional depth)
 	(do* 													; note use of sequential DO*
 		(													; initialize local loop vars
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
@@ -67,7 +69,7 @@
 
 			; if the node is not on OPEN or CLOSED
 			(if (and (not (member child OPEN   :test #'equal-states))
-							 (not (member child CLOSED :test #'equal-states)))
+					 (not (member child CLOSED :test #'equal-states)))
 
 				; add it to the OPEN list
 				(cond
@@ -83,6 +85,25 @@
 				)
 			)
 		)
+	)
+)
+
+;------------------------------------------------------------------------------
+; DFID 
+;------------------------------------------------------------------------------
+(defun search_dfid (start type)
+
+	(let (depth 1) (answer nil) )			; restrict the depth of the dfs search
+											; set answer
+
+	; while no solution found, increase depth
+	(do (depth 1 (1+ depth)
+	
+		; run dfs
+		(setf answer search_bfs_dfs( start 'dfs depth ) )
+
+		; if solution found, return answer
+		(if answer 'done ) ) 
 	)
 )
 
