@@ -10,7 +10,7 @@
 ;------------------------------------------------------------------------------
 
 (defun aStar (start) 
-    (let fN  ; fN = gN + hN
+    (let fN  ; fN = gN + hN  MIGHT NOT NEED THIS HERE
         (currNode (make-node :state start :parent nil))  ; create node for start state
 	    (OPEN (list currNode))                           ; put start node on OPEN list
 	    (CLOSED nil)                                     ;initialize CLOSED list
@@ -24,19 +24,19 @@
             
             (when equal-states ( currNode, GOAL ) 'T ); if the current state is a goal state, return success (likely return a list of states or something (not T))
             
-            (loop for i in (gen_successors currNode ) do  ;for each successor of currNode
+            (loop for child in (gen_successors currNode ) do  ;for each successor of currNode
                
                 ; if the child is not in the open or closed list
-                (when (and (not (find 'i 'OPEN ) ) (not (find 'i 'CLOSED ) ) ) 
+                (when (and (not (find 'child 'OPEN ) ) (not (find 'child 'CLOSED ) ) ) 
                     ( setf (car OPEN ) i ); add the child to the start of open list
                 )
                 
-                (when (find i 'OPEN ) ; if the child is on the open list
-                    ;update F' of i and parent of i
+                (when (find 'child 'OPEN ) ; if the child is on the open list
+                    ;update F' of child and parent of child
                 )
                 
-                (when (find i 'CLOSED ) ; if the child is on the closed list
-                    ;update F' of i and parent of i and move i from closed to open
+                (when (find 'child 'CLOSED ) ; if the child is on the closed list
+                    ;update F' of child and parent of child and move child from closed to open
                 )
             
             )
