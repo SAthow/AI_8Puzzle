@@ -54,7 +54,6 @@
 
 
 
-
 (defun aStar (start) 
     (let hN n ; fN = gN + hN  MIGHT NOT NEED THIS HERE
     
@@ -97,6 +96,10 @@
                 
                 (when (find child 'OPEN ) ; if the child is on the open list
                     ;update F' of child and parent of child
+                    (setf (node-gN child) (1+ (nod-gN currNode ) ) )
+                    (setf (node-hN child) (heuristic (node-state child ) *GOAL* n ) )
+                    (setf (node-fN child) (+ (node-gN child) (node-hN child _) ) ) ; fN = fN + hN
+                    (setf (node-parent child) (node-parent currNode ) )
                 )
                 
                 (cond 
@@ -106,6 +109,7 @@
                     (setf (node-gN child) (1+ (nod-gN currNode ) ) )
                     (setf (node-hN child) (heuristic (node-state child ) *GOAL* n ) )
                     (setf (node-fN child) (+ (node-gN child) (node-hN child _) ) ) ; fN = fN + hN
+                    (setf (node-parent child) (node-parent currNode ) )
                     
                     (delete child 'CLOSED) ;take currNode off of CLOSED list
                     (setf (car OPEN) child); put currNode onto OPEN list
