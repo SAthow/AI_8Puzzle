@@ -34,40 +34,36 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	(let (pos lst)
 		(setf lst nil)
 		(setf pos (position 0 state :test #'equal)) 
-
 		;left
 		(when (>= (mod pos (float n)) 0)
-
-;			(setf lst( cons lst (cons (Swp state pos -1) nil ) ) )
+			;(setq lst (cons lst cons( (lambda (stat po)(Swp stat po -1) state pos) nil) ) )
+			(setf lst( cons lst (cons (Swp state po -1) nil ) ) )
 			(1+ *generatedCount*) 
-			(print 'left)
+			(write 'left )
 		)
-
 		;right
 		(when (<= (mod pos (float n)) (- n 1))
-			(print 'right)
-
-;			(setf lst( cons lst (cons (Swp state pos 1) nil) ) )
+			(write 'right)
+		;	(setq lst (cons lst cons( (lambda (stat po)(Swp state pos 1) state pos) nil) ) ) 
+			(setf lst( cons lst (cons (Swp state pos 1) ) ) )
 			(1+ *generatedCount*)
 		)
-
 		; up 
 		(when (>= (/ pos (float n)) 1)
-			(print 'up)
-			(setf lst (cons lst (Swp state pos (- 0 n) ) ) )
-;			(setf lst (cons lst (cons (Swp state pos (- 0 n) ) nil ) ) )
+			(write 'up)
+		;	(setq lst (cons lst cons( (lambda (stat po)(Swp state pos (- 0 n)) state pos ) nil) ) )  
+			(setf lst (cons lst (cons (Swp state pos (- 0 n) ) nil ) ) )
 			(1+ *generatedCount*) 
 		)
-
 		; down
 		(when (< (/ pos (float n)) (- n 1))
-			(print 'down)
-			(setf lst (cons lst (Swp state pos n) ) )  
-;			(setf lst (cons lst (cons (Swp state pos n) nil ) ) ) 
+			(write 'down)
+		;	(setq lst (cons lst cons( (lambda (state po)(Swp state pos n) state pos) nil) ) )
+			(setf lst (cons lst (cons (Swp state pos n) nil ) ) ) 
 			(1+ *generatedCount*)
 		)
 		(setf state lst)
-		(print lst)
+		(write lst)
 	)
 	state
 )
