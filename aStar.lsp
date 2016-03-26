@@ -36,15 +36,15 @@
 
 (defun BestSuccessor (OPEN)
     (let minf minfpos
-        (setf minf -1)
-        (setf minfpos -1)
+        (setf minf -1) ; initialze minf value to something very small
+        (setf minfpos -1)  ; initialze minfpos value to something very small
         (dolist (node OPEN) 
             ;if the current node has a smaller fN value than the currently tracked fN
             (cond ((< (node-fN node) minf) 
                   ;set the new minimum fN value to be tracked
                   (setf minf (node-fN node ) )
                   ;track the position of the node with the "best" fN value
-                  (setf minfpos (position 0 state :test #'equal))
+                  (setf minfpos (position node OPEN :test #'equal))
                 )
             )  
         )   
@@ -54,12 +54,15 @@
 
 
 
+
 (defun aStar (start) 
-    (let hN  ; fN = gN + hN  MIGHT NOT NEED THIS HERE
+    (let hN n ; fN = gN + hN  MIGHT NOT NEED THIS HERE
+    
+        (setf n 3 ) ; set n to 3 for now....
         
         (currNode (make-node :state start :parent nil :gN 0 :) )  ;create node for start state
         
-        (setf (node-hN currNode) (heuristic (node-state currNode) *GOAL* 3 ) ) ; set the hN value for current node, n = 3 for now
+        (setf (node-hN currNode) (heuristic (node-state currNode) *GOAL* n ) ) ; set the hN value for current node, n = 3 for now
         
         (setf (node-fN currNode) (+ (node-hN currNode) (node-gN) ) ) ; set fN value for currNode
         
@@ -69,14 +72,14 @@
              
 
         (loop while ( > (length OPEN ) 0 )     ; loop until open list is empty
-            (setf currNode (BestSuccessor (node-state OPEN ) )); grab the best node from the successors of the open list
+            (setf currNode (BestSuccessor ( OPEN ) ); grab the best node from the successors of the open list
             
             (delete currNode 'OPEN ) ;take currNode off of OPEN list
             
             (setf (car CLOSED) currNode ); put currNode onto CLOSED list
             
-            ;if the current state is a goal state, return success (likely return a list of states or something (not T))
-            (when (equal-states  (node-state currNode ), (node-state GOAL) ) (build-solution currNode CLOSED) ); 
+            ;if the current state is a goal state, return the solution path
+            (when (equal-states  (node-state currNode ), (node-state GOAL)) (build-solution currNode CLOSED)); 
             
             (dolist (child (gen_successors (node-state currNode )))  ;for each successor of currNode
                 ;initialize some of the child node
@@ -96,10 +99,18 @@
                     ;update F' of child and parent of child
                 )
                 
-                (when (find child 'CLOSED ) ; if the child is on the closed list
-                    ;update F' of child and parent of child and move child from closed to open
+                (cond 
+                    ((find child 'CLOSED) ; if the child is on the closed list
+                    
+                    ;update F' of child and parent of child
+                    (setf (node-gN child) (1+ (nod-gN currNode ) ) )
+                    (setf (node-hN child) (heuristic (node-state child ) *GOAL* n ) )
+                    (setf (node-fN child) (+ (node-gN child) (node-hN child _) ) ) ; fN = fN + hN
+                    
+                    (delete child 'CLOSED) ;take currNode off of CLOSED list
+                    (setf (car OPEN) child); put currNode onto OPEN list
+                    )
                 )
-            
             )
         )
         nil ; return nil if success not returned prior
