@@ -72,12 +72,44 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	state
 )
 
-(defun hueristic (state goal n)
+(defun ad1 (state goal n)
 	(let (total_diff)
 		(setf total_diff 0)
 		(dotimes (x (* n n) nil)
 		
-			(if(not(eq (nth x state) (nth x goal))) (setf total_diff(+ total_diff 1)))
+			(if
+				(not(eq (nth x state) (nth x goal))) 
+				(setf total_diff(+ total_diff 1))	
+			)
 		)
+		
+		total_diff
 	)
+)
+
+(defun ad2 (state goal n)
+	(let (total test_pos test_vert test_val curr_pos curr_hor curr_vert)
+		(setf total 0)
+		
+		(dotimes (x (* n n) nil)
+		
+			;Obtain the goal states variables
+			(setf test_val (nth x goal))
+			(setf test_vert (floor (/ x n)))
+			(setf test_hor (mod x n))	
+			
+			(setf curr_pos (position test_val state :test #'equal))
+			(print curr_pos)
+			(setf curr_vert (floor(/ curr_pos n)))
+			(setf curr_hor (mod curr_pos n))
+			(setf total (+ total (+ (abs (- curr_hor test_hor)) (abs (- curr_vert test_vert)))))
+			
+		)
+		
+		total
+	)
+)
+
+(defun inad1 (state goal n)
+	(- (* n n)(ad1 state goal n))
 )
