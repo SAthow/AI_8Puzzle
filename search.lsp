@@ -42,7 +42,7 @@
 ; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
 ;------------------------------------------------------------------------------
 
-(defun search_bfs_dfs (start type &optional depth)
+(defun search_bfs_dfs (start type &optional (depth -1) )
 	(do* 													; note use of sequential DO*
 		(													; initialize local loop vars
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
@@ -80,10 +80,14 @@
 				(cond
 
 					; BFS - add to end of OPEN list (queue)
-					((eq type 'bfs) (setf OPEN (append OPEN (list child))))
+					( (eq type 'bfs) 
+						( (setf OPEN (append OPEN (list child))) (1+ *distinctNodes*) ) 
+					)
 
 					; DFS - add to start of OPEN list (stack)
-					((eq type 'dfs) (setf OPEN (cons child OPEN)))
+					((eq type 'dfs) 
+						( (setf OPEN (cons child OPEN)) (1+ *distinctNodes*) ) 
+					)
 
 					; error handling for incorrect usage
 					(t (format t "SEARCH: bad search type! ~s~%" type) (return nil))
