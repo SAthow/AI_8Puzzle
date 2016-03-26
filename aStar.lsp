@@ -72,7 +72,7 @@
              
 
         (loop while ( > (length OPEN ) 0 )     ; loop until open list is empty
-            (setf currNode (BestSuccessor ( OPEN ) ); grab the best node from the successors of the open list
+            (setf currNode (BestSuccessor ( OPEN ) ) ); grab the best node from the successors of the open list
             
             (delete currNode 'OPEN ) ;take currNode off of OPEN list
             
