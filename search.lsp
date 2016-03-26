@@ -48,16 +48,18 @@
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
 			(OPEN (list curNode))                           ; OPEN list:    ((start nil))
 			(CLOSED nil)                                    ; CLOSED list:  ( )
-			(let (depth-count 0 ) )							; depth count for DFID
 		)
+
+		(let (depth_count 0))							; depth count for DFID
 
 		; termination condition - return solution path when goal is found
 		; or return from DFS for DFID
-		( cond
-			((goal-state? (node-state curNode)) (build-solution curNode CLOSED))
-			( if (equal dept-count depth) (return nil) )
-		)
+		;(cond
+		;	(if (goal-state? (node-state curNode)) (build-solution curNode CLOSED))
+			;(if (equal depth-count depth) (return nil) )
+		;)
 
+		( if (goal-state? (node-state curNode)) (build-solution curNode CLOSED) )
 		; loop body
 		(when (null OPEN) (return nil))   		          	; no solution
 
@@ -81,12 +83,14 @@
 
 					; BFS - add to end of OPEN list (queue)
 					( (eq type 'bfs) 
-						( (setf OPEN (append OPEN (list child))) (1+ *distinctNodes*) ) 
+						(setf OPEN (append OPEN (list child )))
+;						( (setf OPEN (append OPEN (list child))) (1+ *distinctNodes*) ) 
 					)
 
 					; DFS - add to start of OPEN list (stack)
 					((eq type 'dfs) 
-						( (setf OPEN (cons child OPEN)) (1+ *distinctNodes*) ) 
+						(setf OPEN (cons child OPEN) )
+;						( (setf OPEN (cons child OPEN)) (1+ *distinctNodes*) ) 
 					)
 
 					; error handling for incorrect usage
@@ -94,7 +98,7 @@
 				)
 			)
 		)
-		(1+ depth-count)
+		;(1+ depth-count)
 	)
 )
 
@@ -107,13 +111,13 @@
 											; set answer
 
 	; while no solution found, increase depth
-	(do* (depth 1 (1+ depth)
+	(do* (depth 1 (1+ depth) )
 	
 		; run dfs
-		(setf answer search_bfs_dfs( start 'dfs depth ) )
+		(setf answer search_bfs_dfs( start 'dfs depth ) ) 
 
 		; if solution found, return answer
-		(if answer (return answer) ) ) 
+		(if answer (return answer) )
 	)
 )
 
@@ -142,3 +146,7 @@
 	)
 )
 
+; Check for goal state
+(defun goal-state? (node-state curNode )
+	(if (equal *goal* node-state) (return t))
+)
