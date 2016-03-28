@@ -41,22 +41,22 @@
 
 ; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
 ;------------------------------------------------------------------------------
-
-(defun search_bfs_dfs (start type &optional (depth -1) )
+(defun search_bfs_dfs (start type &optional(depth -1) )
 	(do* 													; note use of sequential DO*
 		(													; initialize local loop vars
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
-			(OPEN (list curNode))                           ; OPEN list:    ((start nil))
+			(OPEN (list curNode))                           ; OPEN list: ((start nil))
 			(CLOSED nil)                                    ; CLOSED list:  ( )
-;			(depth_count 0 )
+			(depth-count 0)
 		)
+
 		; termination condition - return solution path when goal is found
 		; or return from DFS for DFID
-;		(format "depth count is: %d ~%" depth_count)
-;		(cond
-		(when (equal *goal* '(1 2 3 8 0 4 7 6 5 )) (build-solution curNode CLOSED) )
-;			(equal depth-count depth) (return nil) 
-;		)
+		( (equal *goal* (node-state curNode)) (build-solution curNode CLOSED) )
+
+;		(format t "depth count is: ~d" depth-count)
+
+;		( (equal depth-count depth) (return nil) )
 	
 		; loop body
 		(when (null OPEN) (return nil))   		          	; no solution
@@ -97,7 +97,7 @@
 				)
 			)
 		)
-;		(1+ depth-count)
+;		(1+ depth_count)
 	)
 )
 

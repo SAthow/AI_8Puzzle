@@ -7,7 +7,7 @@ Author: John M. Weiss, Ph.D.
 Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 |#
 (defvar *start* '())
-(defvar *goal* '())
+(defvar *goal* '(1 2 3 8 0 4 7 6 5))
 (defvar *open* '())
 (defvar *close* '())
 (defvar *dimension* 0)
@@ -17,6 +17,8 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 (defvar *distinctNodes* 0)
 (defvar *duplicateNodes* 0)
 (defvar *n* 3) ;size of puzzle
+
+(defvar *testSol* '(1 2 3 8 0 4 7 6 5))
 
 (load "search.lsp")
 
