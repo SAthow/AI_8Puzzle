@@ -48,18 +48,16 @@
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
 			(OPEN (list curNode))                           ; OPEN list:    ((start nil))
 			(CLOSED nil)                                    ; CLOSED list:  ( )
+;			(depth_count 0 )
 		)
-
-		(let (depth_count 0))							; depth count for DFID
-
 		; termination condition - return solution path when goal is found
 		; or return from DFS for DFID
-		;(cond
-		;	(if (goal-state? (node-state curNode)) (build-solution curNode CLOSED))
-			;(if (equal depth-count depth) (return nil) )
-		;)
-
-		( if (goal-state? (node-state curNode)) (build-solution curNode CLOSED) )
+;		(format "depth count is: %d ~%" depth_count)
+;		(cond
+		(when (equal *goal* '(1 2 3 8 0 4 7 6 5 )) (build-solution curNode CLOSED) )
+;			(equal depth-count depth) (return nil) 
+;		)
+	
 		; loop body
 		(when (null OPEN) (return nil))   		          	; no solution
 
@@ -70,19 +68,20 @@
 
 		; add successors of current node to OPEN
 		(dolist (child (generate-successors (node-state curNode)))
+;			(print 'doList)
 
 			; for each child node
 			(setf child (make-node :state child :parent (node-state curNode)))
 
 			; if the node is not on OPEN or CLOSED
 			(if (and (not (member child OPEN   :test #'equal-states))
-					 (not (member child CLOSED :test #'equal-states)))
+				(not (member child CLOSED :test #'equal-states)))
 
 				; add it to the OPEN list
 				(cond
 
 					; BFS - add to end of OPEN list (queue)
-					( (eq type 'bfs) 
+					((eq type 'bfs) 
 						(setf OPEN (append OPEN (list child )))
 ;						( (setf OPEN (append OPEN (list child))) (1+ *distinctNodes*) ) 
 					)
@@ -98,7 +97,7 @@
 				)
 			)
 		)
-		;(1+ depth-count)
+;		(1+ depth-count)
 	)
 )
 
