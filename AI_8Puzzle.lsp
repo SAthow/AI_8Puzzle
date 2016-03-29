@@ -90,13 +90,13 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	state
 )
 
-(defun ad1 (state goal n)
+(defun ad1 (state)
 	(let (total_diff)
 		(setf total_diff 0)
-		(dotimes (x (* n n) nil)
+		(dotimes (x (* *n* *n*) nil)
 		
 			(if
-				(not(eq (nth x state) (nth x goal))) 
+				(not(eq (nth x state) (nth x *goal*)))
 				(setf total_diff(+ total_diff 1))	
 			)
 		)
@@ -105,21 +105,21 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	)
 )
 
-(defun ad2 (state goal n)
+(defun ad2 (state)
 	(let (total test_pos test_vert test_val curr_pos curr_hor curr_vert)
 		(setf total 0)
 		
-		(dotimes (x (* n n) nil)
+		(dotimes (x (* *n* *n*) nil)
 		
 			;Obtain the goal states variables
-			(setf test_val (nth x goal))
-			(setf test_vert (floor (/ x n)))
-			(setf test_hor (mod x n))	
+			(setf test_val (nth x *goal*))
+			(setf test_vert (floor (/ x *n*)))
+			(setf test_hor (mod x *n*))	
 			
 			(setf curr_pos (position test_val state :test #'equal))
 			(print curr_pos)
-			(setf curr_vert (floor(/ curr_pos n)))
-			(setf curr_hor (mod curr_pos n))
+			(setf curr_vert (floor(/ curr_pos *n*)))
+			(setf curr_hor (mod curr_pos *n*))
 			(setf total (+ total (+ (abs (- curr_hor test_hor)) (abs (- curr_vert test_vert)))))
 			
 		)
@@ -128,6 +128,122 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	)
 )
 
-(defun inad1 (state goal n)
-	(- (* n n)(ad1 state goal n))
+(defun inad1 (state)
+	(- (* *n* *n*)(ad1 state *goal* *n*))
+)
+
+(defun output_Test (lst n search_name)
+	(let (len temp1 temp2 temp3 temp4)
+		(setf len (length lst))
+		
+		(format t "~%~% *BFS* graph Search ~% ----------------")
+		(format t "----------------~%")
+		(format t " Soultion found ~D moves ~%" 7)
+		(format t " ~D nodes generated (~D), ~D nodes expanded~%~%" 350 219 125)
+		
+		(do 
+			((count 0 (setf count (+ count 4))))
+			((>= count len))
+			(setf temp1 (nth count lst))
+			(setf temp2 (nth (+ count 1) lst))
+			(setf temp3 (nth (+ count 2) lst))
+			(setf temp4 (nth (+ count 3) lst))
+
+			
+			
+			(when
+				(> (- len count) 4)
+				(get_Row temp1 temp2 temp3 temp4 n 0 4 1)
+			)
+			
+			(when
+				(<= (- len count) 4)
+				(get_Row temp1 temp2 temp3 temp4 n 0 (- len count) 0)
+			)
+			(format t "~%")	
+			
+			
+		)
+	   
+	)
+
+)
+
+(defun get_Row (lst1 lst2 lst3 lst4 n row amount arrow)
+	
+		(if
+			(>= row (* n n))
+			(return-from get_Row())
+		)
+	
+		(format t "  " )
+		
+		(when
+			(>= amount 1)
+		
+			(do 
+				((indexX row (setf indexX (+ indexX 1))))
+				((>= indexX (+ row n)))
+				(format t " ~D " (nth indexX lst1))
+			
+			)
+		)	
+		
+		(when
+			(>= amount 2)
+			(if
+				(eq (floor(/ row n)) (floor(/ n 2)))
+				(format t "   ->    " )
+				(format t "         " )
+			)
+		
+			(do 
+				((indexX row (setf indexX (+ indexX 1))))
+				((>= indexX (+ row n)))
+				(format t " ~D " (nth indexX lst2))
+			
+			)
+		)
+
+		(when
+			(>= amount 3)
+			
+			(if
+				(eq (floor(/ row n)) (floor(/ n 2)))
+				(format t "    ->    " )
+				(format t "          " )
+			)
+			
+			(do 
+				((indexX row (setf indexX (+ indexX 1))))
+				((>= indexX (+ row n)))
+				(format t " ~D " (nth indexX lst3))
+			
+			)	
+		)
+		
+		(when
+			(>= amount 4)
+			(if
+				(= (floor(/ row n)) (floor(/ n 2)))
+				(format t "    ->    " )
+				(format t "          " )
+			)
+		
+			(do 
+				((indexX row (setf indexX (+ indexX 1))))
+				((>= indexX (+ row n)))
+				(format t " ~D " (nth indexX lst4))
+			
+			)
+		)
+			(if
+				(and (= arrow 1) (= (floor(/ row n)) (floor(/ n 2))))
+				(format t "    ->    ")
+				(format t "          ")
+			)
+		
+		(format t "~%")	
+		
+		(get_Row lst1 lst2 lst3 lst4 n (+ row n) amount arrow)
 )

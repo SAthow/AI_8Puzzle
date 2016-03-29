@@ -115,5 +115,43 @@ Modifications:
 			(t   (printUsage) )
 )))
 
+(defun read_Puzzle ( filename )
+	(setf lst '())
+	
+    ; check for correct usage
+    (when (null filename) 
+		(return-from fileio "Usage: fileio.lsp filename"))
+
+    ; read through file using open
+    (format t "~%Opening file ~a using open~%" filename)
+    (setf fin (open filename :if-does-not-exist nil))   ; open file, returning NIL on error
+    (when (null fin) (return-from fileio (format nil "Error: cannot open file ~a" filename)))
+    (do ((data (read fin nil) (read fin nil)))          ; read entire file, returning NIL at EOF
+        ((null data) (close fin))                       ; exit when file is read
+		(setf lst (append lst (list data)))
+    )
+	lst
+)
+
+(defun read_Goal ()
+	(setf *Goal* '())
+	
+    ; read through file using open
+    (setf fin (open "goal.puz" :if-does-not-exist nil))   ; open file, returning NIL on error
+    (when (null fin) (return-from fileio (format nil "Error: cannot open file ~a" "goal.puz")))
+    (do ((data (read fin nil) (read fin nil)))          ; read entire file, returning NIL at EOF
+        ((null data) (close fin))                       ; exit when file is read
+		(setf *Goal* (append *Goal* (list data)))
+    )
+)
+
+(defun generate_Goal ()
+	
+	(setf *Goal* ())
+	(dotimes (indexX (* *n* *n*) nil)
+		(setf *Goal* (append *Goal* (list indexX)))
+	)
+)
+
 (getPuz args)
-(print 6
+(print 6)
