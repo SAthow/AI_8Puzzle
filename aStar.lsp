@@ -103,7 +103,7 @@
             (CLOSED nil)
         )
 
-        (setf (starNode-hN currNode) (ad1 (starNode-state currNode) start n )) ; set the hN value for current node, n = 3 for now
+        (setf (starNode-hN currNode) (ad1 (starNode-state currNode) start)) ; set the hN value for current node, n = 3 for now
 
         (setf (starNode-fN currNode) (+ (starNode-hN currNode) (starNode-gN currNode) ) ) ; set fN value for currNode
         (setf OPEN (list currNode )) ; put first node on the open list

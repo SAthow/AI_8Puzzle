@@ -41,7 +41,7 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 ;		(print lst)
 
 		;left
-		(when (and (>= (mod pos (float *n*)) 0)
+		(when (and (>= (mod pos *n*) 0)
 			 (not (eq pos 0) ))
 ;			(print 'left)
 ;			(setf lst( list lst (Swp state pos -1) ) )
@@ -52,7 +52,7 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 		)
 
 		;right
-		(when (<= (mod pos (float *n*)) (- *n* 1))
+		(when (< (mod pos *n*) (- *n* 1))
 ;			(print 'right)
 			(setf right (Swp state pos 1 ) )
 ;			(setf lst( list lst (Swp state pos 1) ) ) 
@@ -129,7 +129,21 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 )
 
 (defun inad1 (state)
-	(- (* *n* *n*)(ad1 state *goal* *n*))
+	(let (pos total)
+		(setf total 0) 
+		(dotimes (indexX (* *n* *n*) 0)
+			(setf pos (position (nth indexX state) *goal* :test #'equal))
+		(print "YAY")
+			(when (not(eq (nth (+ indexX 1) state) (nth (+ pos 1) state)))
+				(if (eq (nth indexX state) 0)
+				(setf total (+ total 1))
+				(setf total (+ total 2))
+			
+				)
+			)
+		)
+		total
+	)
 )
 
 (defun output_Test (lst n search_name)
