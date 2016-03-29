@@ -47,16 +47,32 @@
 			(curNode (make-node :state start :parent nil))  ; current node: (start nil)
 			(OPEN (list curNode))                           ; OPEN list: ((start nil))
 			(CLOSED nil)                                    ; CLOSED list:  ( )
-			(depth-count 0)
+			(depth-count 0 (setf depth-count(+ 1 depth-count) ))
 		)
 
 		; termination condition - return solution path when goal is found
 		; or return from DFS for DFID
-		( (equal *goal* (node-state curNode)) (build-solution curNode CLOSED) )
+		((equal *goal* (node-state curNode)) (build-solution curNode CLOSED))
 
-;		(format t "depth count is: ~d" depth-count)
+		; if it reaches the depth for DFID but not found a solution, check the OPEN
+		; list for the goal state
+		(print 'depth_info)
+		(print depth-count)
+		(print depth)
+		(when (equal depth-count depth) 
+			(dolist (node OPEN) 
+				(setf curNode (car OPEN))
+				(setf OPEN (cdr OPEN))
+				(setf CLOSED (cons curNode CLOSED))
 
-;		( (equal depth-count depth) (return nil) )
+				(print (node-state curNode))
+
+				(if (equal *goal* (node-state curNode)) (return-from (build-solution curNode CLOSED)))
+			)
+
+			;if no answer found
+			(return nil) 
+		)
 	
 		; loop body
 		(when (null OPEN) (return nil))   		          	; no solution
@@ -66,9 +82,9 @@
 		(setf OPEN (cdr OPEN))
 		(setf CLOSED (cons curNode CLOSED))
 
+
 		; add successors of current node to OPEN
 		(dolist (child (generate-successors (node-state curNode)))
-;			(print 'doList)
 
 			; for each child node
 			(setf child (make-node :state child :parent (node-state curNode)))
@@ -82,14 +98,12 @@
 
 					; BFS - add to end of OPEN list (queue)
 					((eq type 'bfs) 
-						(setf OPEN (append OPEN (list child )))
-;						( (setf OPEN (append OPEN (list child))) (1+ *distinctNodes*) ) 
+						(setf OPEN (append OPEN (list child ))) (1+ *distinctNodes*)
 					)
 
 					; DFS - add to start of OPEN list (stack)
 					((eq type 'dfs) 
-						(setf OPEN (cons child OPEN) )
-;						( (setf OPEN (cons child OPEN)) (1+ *distinctNodes*) ) 
+						(setf OPEN (cons child OPEN) ) (1+ *distinctNodes*)
 					)
 
 					; error handling for incorrect usage
@@ -97,7 +111,10 @@
 				)
 			)
 		)
-;		(1+ depth_count)
+;		(print 'open)
+;		(print OPEN)
+;		(print 'closed)
+;		(print CLOSED)
 	)
 )
 
@@ -105,18 +122,26 @@
 ; DFID 
 ;------------------------------------------------------------------------------
 (defun search_dfid (start)
+	(do*
+		(
+			(start-node start)
+			(depth 1 (setf depth(+ 1 depth))) 	; restrict depth of dfs search
+			(depth-count 0)			; counter for depth in dfid search
+			(answer nil)
+		)
 
-	(let (depth 1) (answer nil) )			; restrict the depth of the dfs search
-											; set answer
+		; if solution found, increase depth 
+		( (or (not (null answer)) 
+			 (equal 10 depth )) (return answer))
 
-	; while no solution found, increase depth
-	(do* (depth 1 (1+ depth) )
-	
+;		(print depth)
+;		(print start-node)
+
 		; run dfs
-		(setf answer search_bfs_dfs( start 'dfs depth ) ) 
-
-		; if solution found, return answer
-		(if answer (return answer) )
+		(print 'answer)
+		(print (search_bfs_dfs start-node 'dfs depth) )
+;		(print 'answer )
+		(print answer)
 	)
 )
 
@@ -135,6 +160,9 @@
 
 		; add it to the path
 		(setf path (cons (node-state node) path))
+		(print 'build)
+		(print path)
+		path
 	)
 )
 
