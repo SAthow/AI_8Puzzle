@@ -113,7 +113,7 @@
 )
 
 
-(defun aStar (start)
+(defun aStar (start heuristic)
     (setf *distinctNodes* 0)
     (setf *generatedCount* 0)
     (setf *expandedCount* 0)
@@ -126,7 +126,8 @@
             (tempNode (make-starNode :state nil :parent nil :fN 0 :gN 0 :hN 0 ) )
         )
 
-        (setf (starNode-hN currNode) (ad2 (starNode-state currNode) start n )) ; set the hN value for current node, n = 3 for now
+        ;(setf (starNode-hN currNode) (inad1 (starNode-state currNode) )) ; set the hN value for current node, n = 3 for now
+        (setf (starNode-hN currNode) (heuristic (starNode-state currNode) )) ; set the hN value for current node, n = 3 for now
 
         (setf (starNode-fN currNode) (+ (starNode-hN currNode) (starNode-gN currNode) ) ) ; set fN value for currNode
         (setf OPEN (list currNode )) ; put first node on the open list
@@ -157,7 +158,8 @@
             (dolist (child (generate-successors (starNode-state currNode )))  ;for each successor of currNode
                 ;initialize the child node
                (setf child (make-starNode :state child :parent (starNode-state currNode) :gN (1+ (starNode-gN currNode ))))
-               (setf (starNode-hN child) (ad2 (starNode-state child) (starNode-state *GOALSTATE*) n ) ) ;set child hN
+               ;(setf (starNode-hN child) (inad1 (starNode-state child) ) ) ;set child hN
+               (setf (starNode-hN child) (heuristic (starNode-state child) ) ) ;set child hN
                (setf (starNode-fN child) (+ (starNode-gN child) (starNode-hN child) ) ) ;set child fN
                (setf (starNode-parent child ) (starNode-state currNode ) ); set the parent of the child node
 
