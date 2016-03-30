@@ -20,7 +20,7 @@
 (defvar *distinctNodes* 0)
 (defvar *duplicateNodes* 0)
 (defvar *start* nil)
-(defvar *Goal* nil)
+(defvar *goalstate* nil)
 (defvar *n* 3)
 
 (load "AI_8Puzzle.lsp")

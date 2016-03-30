@@ -8,11 +8,11 @@
 ; hard'(2 8 1 4 6 3 0 7 5) 
 ;tough '(2 1 3 8 0 4 6 7 5)
 ;goal state (needs to be initialized depending on the size of the puzzle being solved)
-    (defvar *GOALSTATE* (make-starNode :state '(1 2 3 8 0 4 7 6 5)  :parent nil :fN nil :gN nil :hN nil ) )
+    ;(defvar *GOALSTATE* (make-starNode :state '(1 2 3 8 0 4 7 6 5)  :parent nil :fN nil :gN nil :hN nil ) )
 
-    (defvar *START* (make-starNode :state '(2 1 3 8 0 4 6 7 5) :parent nil :fN nil :gN nil :hN nil) )
+    ;(defvar *START* (make-starNode :state '(2 1 3 8 0 4 6 7 5) :parent nil :fN nil :gN nil :hN nil) )
     
-    (defvar *n* 3)
+    ;(defvar *n* 3)
 
 ; Test if two nodes have the same state.
 ;	(defun equal-states (n1 n2) (equal (node-state n1) (node-state n2)))
