@@ -40,11 +40,12 @@ Modifications:
 
 
 
-(setf args (list 1 (list 1 3 4 8 6 2 7 0 5) "easy.puz" ) )
+;(setf args (list 1 (list 1 3 4 8 6 2 7 0 5) "easy.puz" ) )
 ;(print (length args ) )
 ;(print 2)
 (defun getPuzzle (args)
 	(let (file puzzle)
+        (print args)
 		(cond
 			; usage case: (load '8puzzle) 
 			;             (8puzzle)
@@ -62,7 +63,7 @@ Modifications:
                     ;(format t "The cdr of the puzzle is: ~a" (cdr puzzle))
                     (if (solvable puzzle )
                         ;(print "Puzzle is solvable")
-                        (setf *start* (list puzzle))
+                        (setf *start* puzzle)
                         
                         ;else
                         (print "Puzzle is not solvable")   
@@ -83,7 +84,7 @@ Modifications:
 						(setf puzzle (cadr args))
                         
                         (when (solvable puzzle)
-                            (setf *start* (list puzzle))
+                            (setf *start* puzzle)
                             (print *start*)
                         )
                         
@@ -91,6 +92,7 @@ Modifications:
                             (print "Puzzle is not solvable")
                             nil ; return nil?
                         )
+                    )
                             
   
                     ((atomp (cdr args ))  ;if an atom is present in the cdr of args, assume it is a file name
@@ -100,7 +102,7 @@ Modifications:
                         ;(print "cadr was not a list!")
                         (when (solvable puzzle )
                             ;put into *Start*
-                            (setf *start* (list puzzle))
+                            (setf *start* puzzle)
                             (print *start*)
                         )
                         
@@ -112,31 +114,34 @@ Modifications:
                                                 
                     )  
                 )
+            )
 
-                  ; usage case: clisp 8puzzle.lsp puzzlefile 
-                    ((= (length args) 3)
-                        (print "args was 3" )
-                        (setf file (caddr *args*))
-                        (setf puzzle (read_Puzzle file))
-                        
-                        (when (solvable puzzle )
-                            ;put into *Start*
-                            (setf *start* (list puzzle))
-                            (print *start*)
-                        )
-                        
-                        (when (not (solvable puzzle) )
-                            ;else tell user that the puzzle is not solvable
-                            (print "Puzzle is not solvable")
-                            nil
-                        )
-                        
-                    )							
-                    
-                        ;print usage for any other form of user input
-                    (t   (print "DIDN'T WORK"));(printUsage) 
+              ; usage case: clisp 8puzzle.lsp puzzlefile 
+            ((= (length args) 3)
+                (print "args was 3" )
+                (setf file (caddr args))
+                ;(print file)
+                (setf puzzle (read_Puzzle file))
+                
+                (when (solvable puzzle )
+                    ;put into *Start*
+                    (setf *start* puzzle)
+                    (print *start*)
                 )
-)))
+                
+                (when (not (solvable puzzle) )
+                    ;else tell user that the puzzle is not solvable
+                    (print "Puzzle is not solvable")
+                    nil
+                )
+                
+            )							
+            
+                ;print usage for any other form of user input
+            (t   (print "DIDN'T WORK"));(printUsage) 
+        )
+    )
+)
 
 (defun read_Puzzle ( filename )
 	(setf lst '())

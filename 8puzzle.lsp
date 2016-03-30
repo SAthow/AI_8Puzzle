@@ -21,6 +21,7 @@
 (defvar *duplicateNodes* 0)
 (defvar *start* nil)
 (defvar *Goal* nil)
+(defvar *n* 3)
 
 (load "AI_8Puzzle.lsp")
 (load "aStar.lsp")

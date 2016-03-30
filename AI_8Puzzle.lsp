@@ -16,17 +16,17 @@
 
 *****************************************************************************|#
 
-(defvar *start* '())
-(defvar *goal* '(1 2 3 8 0 4 7 6 5))
-(defvar *open* '())
-(defvar *close* '())
-(defvar *dimension* 0)
-(defvar *moveCount* 0)
-(defvar *generatedCount* 0)
-(defvar *expandedCount* 0)
-(defvar *distinctNodes* 0)
-(defvar *duplicateNodes* 0)
-(defvar *n* 3) ;size of puzzle
+;(defvar *start* '())
+;(defvar *goal* '(1 2 3 8 0 4 7 6 5))
+;(defvar *open* '())
+;(defvar *close* '())
+;(defvar *dimension* 0)
+;(defvar *moveCount* 0)
+;(defvar *generatedCount* 0)
+;(defvar *expandedCount* 0)
+;(defvar *distinctNodes* 0)
+;(defvar *duplicateNodes* 0)
+;(defvar *n* 3) ;size of puzzle
 
 (defvar *testSol* '(1 2 3 8 0 4 7 6 5))
 
