@@ -1,7 +1,7 @@
 
 
 ; Node structure: stores state and parent.
-	(defstruct starNode state parent fN gN hN)
+	;(defstruct starNode state parent fN gN hN)
 
  ;easy '(1 3 4 8 6 2 7 0 5) 
  ;medium '(2 8 1 0 4 3 7 6 5) 
@@ -73,18 +73,8 @@
         
         (setf *moveCount* (1-(length path)))
         
-        ;(print path)
-        
-        ;(print "Number of moves:")
-    ;(print (1-(length path)))
-    ;(print *moveCount*)
-    ;(print "Number of distinct nodes:")
-    ;(print *distinctNodes*)
-    ;(print "Number of nodes generated:")
-    ;(print *generatedCount*)
-    ;(print "Number of nodes expanded: ")
-    ;(print *expandedCount* )
-    (setf path_passed path)
+
+        (setf path_passed path)
     
 	)
     (format_output path_passed)
