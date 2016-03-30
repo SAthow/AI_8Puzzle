@@ -67,12 +67,13 @@
 		(setf curNode (car OPEN))
 		(setf OPEN (cdr OPEN))
 		(setf CLOSED (cons curNode CLOSED))
+		(setf *expandedCount* (+ 1 *expandedCount*))
 
 		; add successors of current node to OPEN
 		(dolist (child (generate-successors (node-state curNode)))
 
 			; for each child node
-			(setf child (make-node :state child :parent (node-state curNode) :depth (1+ (node-depth curNode) ) ))
+			(setf child (make-node :state child :parent (node-state curNode) :depth (1+ (node-depth curNode))))
 
 			; if the node is not on OPEN or CLOSED
 			(if (and (not (member child OPEN   :test #'equal-states) )
@@ -88,9 +89,9 @@
 
 					; DFID - add to start of OPEN list (stack) so long as depth of child is
 					;  less than the depth of the iteration
-					( (eq type 'dfs) 
+					((eq type 'dfs) 
 						(if (<= (node-depth child) depth )
-						(setf OPEN (cons child OPEN) ) (setf *distinctNodes* (+ 1 *distinctNodes*) ) )
+						(setf OPEN (cons child OPEN)) (setf *distinctNodes* (+ 1 *distinctNodes*)))
 					)
 					; error handling for incorrect usage
 					(t (format t "SEARCH: bad search type! ~s~%" type) (return nil))
@@ -103,6 +104,8 @@
 ;------------------------------------------------------------------------------
 ; DFID - Depth First Iterated Search
 ; Given a start state, search for the goal using DFS with a depth bound
+; Reset generatedCount, expandedCount and distinctNodes for each iteration so
+; we get the final stats
 ;------------------------------------------------------------------------------
 (defun search_dfid (start)
 	(do*
@@ -114,6 +117,11 @@
 
 		; if solution found, return answer 
 		( (not (null answer) ) (return answer) )
+
+		; reset stats
+		(setf *generatedCount* 0)
+		(setf *expandedCount* 0)
+		(setf *distinctNodes* 0)
 
 		; run DFID for next layer bound
 		(setf answer (search_bfs_dfs start-node 'dfs depth) )
