@@ -13,6 +13,10 @@
 
 
 *****************************************************************************|#
+; Node structure for a*: stores state and parent and relevant data to a* .
+(defstruct starNode state parent fN gN hN)
+; Node structure for dfid/bfs: stores state, parent and depth.
+(defstruct node state parent depth)
 
 (defvar *moveCount* 0)
 (defvar *generatedCount* 0)
@@ -20,7 +24,8 @@
 (defvar *distinctNodes* 0)
 (defvar *duplicateNodes* 0)
 (defvar *start* nil)
-(defvar *goalstate* nil)
+(defvar *GOALSTATE* (make-starNode :state '(1 2 3 8 0 4 7 6 5) :parent nil :fN nil :gN nil :hN nil ) )
+(defvar *GOAL* (make-node :state '(1 2 3 8 0 4 7 6 5) ))
 (defvar *n* 3)
 
 (load "AI_8Puzzle.lsp")
@@ -28,9 +33,9 @@
 (load "getPuzzle.lsp")
 
 
-(defun 8puzzle ()
+(defun 8puzzle (args)
     
-    (getPuzzle *args*)      ; get them puzzlin' shitz and set start state
+    (getPuzzle args)      ; get them puzzlin' shitz and set start state
     
     (search_bfs_dfs *start* 'bfs) ;run bfs
     
