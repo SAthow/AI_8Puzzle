@@ -1,11 +1,21 @@
-#|
-        ***** AI_8Puzzle.lsp *****
+#|**************************************************************************
 
-This program
+ Author: Stephanie Athow, Luke Meyer, Alex Nienhueser
 
-Author: John M. Weiss, Ph.D.
-Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
-|#
+
+ Description: This program is design to solve an 8-puzzle using BFS 
+   (breadth first search), DFID (depth first iterated deepening), and A*.
+    The start position may be specified in a puzzle file, or via promts.
+    After solving the puzzle with each search algorithm, a nicely 
+    formatted list of positions, leading from the start state to the goal 
+    state will be printed. As well as the number of moves required to reach
+    the goal state, and the number of nodes generated and expanded 
+    (i.e., the number placed on the OPEN and CLOSED lists, respectively). 
+    This will provide a rough metric for search algorithm efficiency.
+
+
+*****************************************************************************|#
+
 (defvar *start* '())
 (defvar *goal* '(1 2 3 8 0 4 7 6 5))
 (defvar *open* '())
@@ -22,6 +32,26 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 
 (load "search.lsp")
 
+
+(defun main 
+
+
+
+#|**************************************************************************
+ Function: Swp
+
+ Author: Alex Nienhueser
+
+ Description: This function takes a position and an offeset and swap the given
+    position with its given offeset in the passed list.
+
+ Args:
+    lst:        List of the elements to be swapped.
+    pos:        The position to be swapped.
+    offset:        The offset of the pos to be swapped with.
+
+*****************************************************************************|#
+
 (defun Swp (lst pos offset)
 	(let (tempList)
 		(setq tempList (copy-list lst) )
@@ -32,63 +62,70 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	)
 )
 
+#|**************************************************************************
+Function: generate-successors
+ 
+ Author: Stephanie Athow, Alex Nienhueser
+
+ Description: This function takes a node state and will generate all possible 
+    successors from it (ex: Up,  Down, Left, Right). It will the return a 
+    list of lists containing those successors.
+
+ Args:
+   state:        The current node state to have its childern generated.
+
+*****************************************************************************|#
+
 (defun generate-successors (state )
 	(let (pos lst left right up down)
 		(setf pos (position 0 state :test #'equal)) 
-;		(print 'state)
-;		(print state)
-;		(print 'lst)
-;		(print lst)
 
-		;left
+
+        ;Determine if the left sucessor can be generated
 		(when (and (>= (mod pos *n*) 0)
 			 (not (eq pos 0) ))
-;			(print 'left)
-;			(setf lst( list lst (Swp state pos -1) ) )
-;			(print lst)
-;			(print pos)
 			(setf left (Swp state pos -1) )
 			(1+ *generatedCount*)
 		)
 
-		;right
+		;Determine if the right sucessor can be generated
 		(when (< (mod pos *n*) (- *n* 1))
-;			(print 'right)
 			(setf right (Swp state pos 1 ) )
-;			(setf lst( list lst (Swp state pos 1) ) ) 
-;			(print lst)
 			(1+ *generatedCount*)
 		)
 
-		; up 
+		;Determine if the up sucessor can be generated 
 		(when (>= (/ pos (float *n*)) 1)
-;			(print 'up)
 			(setf up (Swp state pos (- 0 *n* ) ) )
-;			(setf lst (list lst (Swp state pos (- 0 *n*) ) ) )
-;			(print lst)
 			(1+ *generatedCount*) 
 		)
 
-		; down
+		;Determine if the down sucessor can be generated
 		(when (< (/ pos (float *n*)) (- *n* 1))
-;			(print 'down)
 			(setf down (Swp state pos *n* ) )
-;			(setf lst (list lst (Swp state pos *n*) ) )
-;			(print lst)
 			(1+ *generatedCount*)
 		)
-;		(setf state lst)
-;		(setf lst( remove nil lst) )
+		
 		(setf successors (list left right up down) )
 		(setf successors (remove nil successors))
-;		(setf successors ( cons left (cons right (cons up down ) ) ) )
-;		(print 'successors)
-;		(print successors)
-;		(print lst)
 		(setf state successors)
 	)
 	state
 )
+
+#|**************************************************************************
+ Function: ad1
+ 
+ Author: Alex Nienhueser
+ 
+ Description: This function calculates an admissable h' for a given node.
+    The fuction checks the amount of value that incorrectly placed and returns
+    the sum of missplaced values.
+
+ Args:
+    state:        The current node state to have it's huerstic calculated
+ 
+*****************************************************************************|#
 
 (defun ad1 (state)
 	(let (total_diff)
@@ -105,6 +142,20 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	)
 )
 
+#|**************************************************************************
+ Function: ad2
+ 
+ Author: Alex Nienhueser
+ 
+ Description: This function calculates an admissable h' for a given node.
+    The fuction checks the amount of value that incorrectly placed and returns
+    the sum of the distance they are from the their correct position.
+ 
+ Args:
+    state:        The current node state to have it's huerstic calculated
+	
+*****************************************************************************|#
+
 (defun ad2 (state)
 	(let (total test_pos test_vert test_val curr_pos curr_hor curr_vert)
 		(setf total 0)
@@ -117,7 +168,6 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 			(setf test_hor (mod x *n*))	
 			
 			(setf curr_pos (position test_val state :test #'equal))
-			(print curr_pos)
 			(setf curr_vert (floor(/ curr_pos *n*)))
 			(setf curr_hor (mod curr_pos *n*))
 			(setf total (+ total (+ (abs (- curr_hor test_hor)) (abs (- curr_vert test_vert)))))
@@ -128,12 +178,29 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 	)
 )
 
+#|**************************************************************************
+ Function: inad1
+ 
+ Author: Alex Nienhueser
+ 
+ Description: This function calculates an inadmissable h' for a given node,
+	this method is know as Nilsson's Sequence Score 
+	(https://heuristicswiki.wikispaces.com/Nilsson%27s+Sequence+Score). 
+	The fuction will check each position in a given puzzle. If the position's
+	value is zero and its following value doesnt match goals we will increment
+	one. If the position's value is non-zero and its following value doesnt match
+	goals we will increment two. Once all the positions have been checked we then
+	add the incremented total to our second admissable funtion.
+ 
+ Args:
+    state:        The current node state to have it's huerstic calculated
+ 
+*****************************************************************************|#
 (defun inad1 (state)
 	(let (pos total)
 		(setf total 0) 
 		(dotimes (indexX (* *n* *n*) 0)
 			(setf pos (position (nth indexX state) *goal* :test #'equal))
-		(print "YAY")
 			(when (not(eq (nth (+ indexX 1) state) (nth (+ pos 1) state)))
 				(if (eq (nth indexX state) 0)
 				(setf total (+ total 1))
@@ -142,11 +209,27 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 				)
 			)
 		)
-		total
+		(+ ad2 (* total 3))
 	)
 )
 
-(defun output_Test (lst n search_name)
+
+#|**************************************************************************
+ Function: get_Row
+ 
+ Author: Alex Nienhueser
+ 
+ Description: This function ouputs the path and infomation from a given 
+	search algorithm.
+ 
+ Args:
+   lst:		The list of puzzle paths
+   row: 	The current row to be printed of the puzzle
+   amount: 	Amount of lists to be printed
+   arrow: 	Determines if an arrow needs to be printed for the fourth list
+ 
+*****************************************************************************|#
+(defun output_Test (lst search_name)
 	(let (len temp1 temp2 temp3 temp4)
 		(setf len (length lst))
 		
@@ -167,12 +250,12 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 			
 			(when
 				(> (- len count) 4)
-				(get_Row temp1 temp2 temp3 temp4 n 0 4 1)
+				(get_Row temp1 temp2 temp3 temp4 0 4 1)
 			)
 			
 			(when
 				(<= (- len count) 4)
-				(get_Row temp1 temp2 temp3 temp4 n 0 (- len count) 0)
+				(get_Row temp1 temp2 temp3 temp4 0 (- len count) 0)
 			)
 			(format t "~%")	
 			
@@ -183,81 +266,106 @@ Posted Spring 2016 for SDSM&T CSC447/547 Artificial Intelligence.
 
 )
 
-(defun get_Row (lst1 lst2 lst3 lst4 n row amount arrow)
+#|**************************************************************************
+ Function: get_Row
+ 
+ Author: Alex Nienhueser
+ 
+ Description: This function takes up to four lists and formats output.
+ 
+ Args:
+   lst1: 	First Puzzle
+   lst2: 	Second Puzzle
+   lst3: 	Thrid Puzzle
+   lst4: 	Puzzle
+   row: 	The current row to be printed of the puzzle
+   amount: 	Amount of lists to be printed
+   arrow: 	Determines if an arrow needs to be printed for the fourth list
+ 
+*****************************************************************************|#
+(defun get_Row (lst1 lst2 lst3 lst4 row amount arrow)
 	
+		;If we are done printing return
 		(if
-			(>= row (* n n))
+			(>= row (* *n* *n*))
 			(return-from get_Row())
 		)
 	
 		(format t "  " )
 		
+		;Print a row of the first list 
 		(when
 			(>= amount 1)
 		
 			(do 
 				((indexX row (setf indexX (+ indexX 1))))
-				((>= indexX (+ row n)))
+				((>= indexX (+ row *n*)))
 				(format t " ~D " (nth indexX lst1))
 			
 			)
 		)	
 		
+		;Print a row of the second list 
 		(when
 			(>= amount 2)
+			;Print an arrow/Space
 			(if
-				(eq (floor(/ row n)) (floor(/ n 2)))
+				(eq (floor(/ row *n*)) (floor(/ *n* 2)))
 				(format t "   ->    " )
 				(format t "         " )
 			)
 		
 			(do 
 				((indexX row (setf indexX (+ indexX 1))))
-				((>= indexX (+ row n)))
+				((>= indexX (+ row *n*)))
 				(format t " ~D " (nth indexX lst2))
 			
 			)
 		)
 
+		;Print a row of the third list 
 		(when
 			(>= amount 3)
-			
+			;Print an arrow/Space
 			(if
-				(eq (floor(/ row n)) (floor(/ n 2)))
+				(eq (floor(/ row *n*)) (floor(/ *n* 2)))
 				(format t "    ->    " )
 				(format t "          " )
 			)
 			
 			(do 
 				((indexX row (setf indexX (+ indexX 1))))
-				((>= indexX (+ row n)))
+				((>= indexX (+ row *n*)))
 				(format t " ~D " (nth indexX lst3))
 			
 			)	
 		)
 		
+		;Print a row of the fourth list 
 		(when
+			;Print an arrow/Space
 			(>= amount 4)
 			(if
-				(= (floor(/ row n)) (floor(/ n 2)))
+				(= (floor(/ row *n*)) (floor(/ *n* 2)))
 				(format t "    ->    " )
 				(format t "          " )
 			)
 		
 			(do 
 				((indexX row (setf indexX (+ indexX 1))))
-				((>= indexX (+ row n)))
+				((>= indexX (+ row *n*)))
 				(format t " ~D " (nth indexX lst4))
 			
 			)
 		)
+			;Determine if an arrow needs to be printed
 			(if
-				(and (= arrow 1) (= (floor(/ row n)) (floor(/ n 2))))
+				(and (= arrow 1) (= (floor(/ row *n*)) (floor(/ *n* 2))))
 				(format t "    ->    ")
 				(format t "          ")
 			)
 		
 		(format t "~%")	
 		
-		(get_Row lst1 lst2 lst3 lst4 n (+ row n) amount arrow)
+		(get_Row lst1 lst2 lst3 lst4 (+ row *n*) amount arrow)
 )
