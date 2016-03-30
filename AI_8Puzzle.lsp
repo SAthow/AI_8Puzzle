@@ -276,7 +276,7 @@ Function: generate-successors
  Args:
    lst1: 	First Puzzle
    lst2: 	Second Puzzle
-   lst3: 	Thrid Puzzle
+   lst3: 	Third Puzzle
    lst4: 	Puzzle
    row: 	The current row to be printed of the puzzle
    amount: 	Amount of lists to be printed
