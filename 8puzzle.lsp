@@ -28,7 +28,7 @@
 (load "getPuzzle.lsp")
 
 
-(defun 8puzzle.lsp
+(defun 8puzzle ()
     
     (getPuzzle *args*)      ; get them puzzlin' shitz and set start state
     

@@ -130,10 +130,10 @@ Function: generate-successors
 (defun ad1 (state)
 	(let (total_diff)
 		(setf total_diff 0)
-		(dotimes (x (* *n* *n*) nil)
+		(dotimes (x (* *n* *n*) 0)
 		
 			(if
-				(not(eq (nth x state) (nth x *goal*)))
+				(not(eq (nth x state) (nth x (starNode-state *goalstate*))))
 				(setf total_diff(+ total_diff 1))	
 			)
 		)
@@ -160,10 +160,10 @@ Function: generate-successors
 	(let (total test_pos test_vert test_val curr_pos curr_hor curr_vert)
 		(setf total 0)
 		
-		(dotimes (x (* *n* *n*) nil)
+		(dotimes (x (* *n* *n*) 0)
 		
 			;Obtain the goal states variables
-			(setf test_val (nth x *goal*))
+			(setf test_val (nth x (starNode-state *goalstate*)))
 			(setf test_vert (floor (/ x *n*)))
 			(setf test_hor (mod x *n*))	
 			
@@ -200,7 +200,7 @@ Function: generate-successors
 	(let (pos total)
 		(setf total 0) 
 		(dotimes (indexX (* *n* *n*) 0)
-			(setf pos (position (nth indexX state) *goal* :test #'equal))
+			(setf pos (position (nth indexX state) (starNode-state *goalstate*) :test #'equal))
 			(when (not(eq (nth (+ indexX 1) state) (nth (+ pos 1) state)))
 				(if (eq (nth indexX state) 0)
 				(setf total (+ total 1))
@@ -229,14 +229,14 @@ Function: generate-successors
    arrow: 	Determines if an arrow needs to be printed for the fourth list
  
 *****************************************************************************|#
-(defun output_Test (lst search_name)
+(defun format_output (lst)
 	(let (len temp1 temp2 temp3 temp4)
 		(setf len (length lst))
 		
-		(format t "~%~% *BFS* graph Search ~% ----------------")
+		;(format t "~%~% *BFS* graph Search ~% ----------------")
 		(format t "----------------~%")
-		(format t " Soultion found ~D moves ~%" 7)
-		(format t " ~D nodes generated (~D), ~D nodes expanded~%~%" 350 219 125)
+		(format t " Solution found ~D moves ~%" *moveCount*)
+		(format t " ~D nodes generated (~D distinct nodes), ~D nodes expanded~%~%" *generatedCount* *distinctNodes* *expandedCount*)
 		
 		(do 
 			((count 0 (setf count (+ count 4))))
