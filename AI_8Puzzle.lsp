@@ -215,7 +215,7 @@ Function: generate-successors
 
 
 #|**************************************************************************
- Function: get_Row
+ Function: format_output
  
  Author: Alex Nienhueser
  
@@ -271,7 +271,8 @@ Function: generate-successors
  
  Author: Alex Nienhueser
  
- Description: This function takes up to four lists and formats output.
+ Description: This function takes up to four lists and formats output one 
+	row at a time.
  
  Args:
    lst1: 	First Puzzle
