@@ -20,50 +20,72 @@
  | Written Spring 2016 for CSC447/547 AI class.
  |
  | Modifications:
- |	Stephanie Athow: added a Depth-First-Iterated-Deepening option
+ |	22 March 2016, Stephanie Athow: added a Depth-First-Iterated-Deepening option
  | 
  |#
 
 ;------------------------------------------------------------------------------
 ; Node structure: stores state and parent.
-;------------------------------------------------------------------------------
 	(defstruct node state parent depth)
 
-;------------------------------------------------------------------------------
 ; Test if two nodes have the same state.
-;------------------------------------------------------------------------------
 	(defun equal-states (n1 n2) (equal (node-state n1) (node-state n2)))
-
 ;------------------------------------------------------------------------------
 ; Breadth-first-search implements the OPEN list as a QUEUE of (state parent) nodes.
-;------------------------------------------------------------------------------
 	(defun bfs (start) (search_bfs_dfs start 'bfs))
 
-;------------------------------------------------------------------------------
 ; Depth-first-search implements the OPEN list as a STACK of (state parent) nodes.
-;------------------------------------------------------------------------------
 	(defun dfs (start) (search_bfs_dfs start 'dfs))
 
-;------------------------------------------------------------------------------
-; Given a start state and a search type (BFS or DFS), return a path from the 
-; start to the goal. The depth option is for the DFID search option.
+; Depth-First-Iterated-Deepening runs dfs to a specified depth
+; Given a start state and a search type (BFS or DFS), return a path from the start to the goal.
 ;------------------------------------------------------------------------------
 (defun search_bfs_dfs (start type &optional(depth -1) )
-	(do* 															; note use of sequential DO*
-		(															; initialize local loop vars
-			(depth-count 0 (setf depth-count(+ 1 depth-count)))		; depth count for DFID
-			(curNode (make-node :state start :parent nil :depth 0)) ; current node: (start nil)
-			(OPEN (list curNode))                           		; OPEN list: ((start nil))
-			(CLOSED nil)                                    		; CLOSED list:  ( )
+	(do* 													; note use of sequential DO*
+		(													; initialize local loop vars
+			(depth-count 0 (setf depth-count(+ 1 depth-count)))
+			(curNode (make-node :state start :parent nil :depth 0))  ; current node: (start nil)
+			(OPEN (list curNode))                           ; OPEN list: ((start nil))
+			(CLOSED nil)                                    ; CLOSED list:  ( )
 			(flag_cont nil)
 		)
 
 		; termination condition - return solution path when goal is found
+		; or return from DFS for DFID
 		((equal *goal* (node-state curNode)) (build-solution curNode CLOSED))
+
+		(setf (node-depth curNode) depth-count)  
+
+		; if it reaches the depth for DFID but not found a solution, check the OPEN
+		; list for the goal state
+		(print depth-count)
+		(when (>= depth-count depth) 
+			;(print 'OPEN)
+			;(print open)
+			(dolist (node OPEN) 
+				(setf curNode (car OPEN))
+				(setf OPEN (cdr OPEN))
+				(setf CLOSED (cons curNode CLOSED))
+
+				; if goal, return solution
+				(when (equal *goal* (node-state curNode)) (return-from (build-solution curNode CLOSED)))
+				; if the node is not at the bottom level, generate its successors
+				(print 'node_depth)
+				(print (node-depth curNode) )
+				(when (< (node-depth curNode) depth) (setf flag_cont t) (return) )
+			)
+			(print 'step_out_of_dolist)
+			; Continue dfs until goal found or return to depth 
+			(when flag_cont (setf flag_cont nil) (setf depth_count (node-depth curNode))) 
+		)
+
+		(print 'back_in_the_game)	
+		(print (node-depth curNode))
 
 		; loop body
 		(when (null OPEN) (return nil))   		          	; no solution
 
+		; get current node from OPEN, update OPEN and CLOSED
 		(setf curNode (car OPEN))
 		(setf OPEN (cdr OPEN))
 		(setf CLOSED (cons curNode CLOSED))
@@ -75,23 +97,22 @@
 			(setf child (make-node :state child :parent (node-state curNode) :depth (1+ (node-depth curNode) ) ))
 
 			; if the node is not on OPEN or CLOSED
-			(if (and (not (member child OPEN   :test #'equal-states) )
-				(not (member child CLOSED :test #'equal-states) ) )
+			(if (and (not (member child OPEN   :test #'equal-states))
+				(not (member child CLOSED :test #'equal-states)))
 
 				; add it to the OPEN list
 				(cond
 
 					; BFS - add to end of OPEN list (queue)
 					((eq type 'bfs) 
-						(setf OPEN (append OPEN (list child ))) (setf *distinctNodes* (+ 1 *distinctNodes*))
+						(setf OPEN (append OPEN (list child ))) (1+ *distinctNodes*)
 					)
 
-					; DFID - add to start of OPEN list (stack) so long as depth of child is
-					;  less than the depth of the iteration
-					( (eq type 'dfs) 
-						(if (<= (node-depth child) depth )
-						(setf OPEN (cons child OPEN) ) (setf *distinctNodes* (+ 1 *distinctNodes*) ) )
+					; DFS - add to start of OPEN list (stack)
+					((eq type 'dfs) 
+						(setf OPEN (cons child OPEN) ) (1+ *distinctNodes*)
 					)
+
 					; error handling for incorrect usage
 					(t (format t "SEARCH: bad search type! ~s~%" type) (return nil))
 				)
@@ -101,23 +122,28 @@
 )
 
 ;------------------------------------------------------------------------------
-; DFID - Depth First Iterated Search
-; Given a start state, search for the goal using DFS with a depth bound
+; DFID 
 ;------------------------------------------------------------------------------
 (defun search_dfid (start)
 	(do*
 		(
-			(start-node start)					; start node 
+			(start-node start)
 			(depth 1 (setf depth(+ 1 depth))) 	; restrict depth of dfs search
-			(answer nil)						; hold answer to return
+			(answer nil)
 		)
 
-		; if solution found, return answer 
-		( (not (null answer) ) (return answer) )
+		; if solution found, increase depth 
+		( (or (not (null answer)) 
+			 (equal 10 depth )) (return answer))
 
-		; run DFID for next layer bound
+;		(print depth)
+;		(print start-node)
+
+		; run dfs
+		(print 'answer)
 		(setf answer (search_bfs_dfs start-node 'dfs depth) )
-		answer
+;		(print 'answer )
+		(print answer)
 	)
 )
 
@@ -127,6 +153,7 @@
 ; by tracing back through the parents to the start node (nil parent).
 ;------------------------------------------------------------------------------
 (defun build-solution (node node-list)
+	(print 'build)
 	(do
 		((path (list (node-state node))))        ; local loop var
 		((null (node-parent node)) path)         ; termination condition
@@ -136,14 +163,19 @@
 
 		; add it to the path
 		(setf path (cons (node-state node) path))
+		(print path)
+		path
 	)
 )
-;------------------------------------------------------------------------------
+
 ; Member-state looks for a node on the node-list with the same state.
-;------------------------------------------------------------------------------
 (defun member-state (state node-list)
 	(dolist (node node-list)
 	(when (equal state (node-state node)) (return node))
 	)
 )
 
+; Check for goal state
+(defun goal-state? (node-state curNode )
+	(if (equal *goal* node-state) (return t))
+)
