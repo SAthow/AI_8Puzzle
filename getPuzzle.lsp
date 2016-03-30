@@ -1,6 +1,11 @@
-;( defvar *Start* )    ;start state of 8-tile puzzle
-;(print 1)
-(defun readPuzzleFile 'file T )
+#|**************************** GETPUZZLE.LSP *************************************
+
+ The functions found within this file are responsible for getting input from the user
+
+ Author: Luke Meyer, Alex Nienhueser
+ Written Spring 2016 
+ 
+*****************************************************************************|#
 
 #|
                   ***** SOLVABLE.LSP *****
@@ -27,6 +32,7 @@ Modifications:
     (eq *flag* (evenp (position 0 L)))
 )
 
+
 (defun disorder (elem L)
     (cond
         ((eq (car L) elem))
@@ -40,29 +46,28 @@ Modifications:
 
 
 
-;(setf args (list 1 (list 1 3 4 8 6 2 7 0 5) "easy.puz" ) )
-;(print (length args ) )
-;(print 2)
-(defun getPuzzle (args)
+#|*****************************************************************************
+  Function: getPuzzle
+
+  Author: Luke Meyer
+
+  Description:  gets puzzle from user, either from file or list
+
+  Args:
+	args:	user parameters
+*****************************************************************************|#
+(defun getPuzzle (args) 
 	(let (file puzzle)
-        (print args)
-		(cond
-			; usage case: (load '8puzzle) 
-			;             (8puzzle)
-			((= (length args ) 1 ) ;if the user wants to interactively specify the puzzle to solve
-                (print "args was 1" )
-                
-				(format t "Please enter a permutation of the digits 0-8, separating each by a space; 0 denotes the blank tile: ")
+       
+        (when (= args 0 )
+
+            (print "Please enter a permutation of the digits 0-8, separating each by a space; 0 denotes the blank tile: ")
                 
 				(setf puzzle (list (read) (read) (read) (read) (read) (read) (read) (read) (read) ) )  ; do nine reads to get user's input
-                ;(print (car puzzle) )
-                ;(print (cdr puzzle) )
                 
 				(if ( = (length puzzle) 9) 
                     ; validate puzzle and put into *Start*
-                    ;(format t "The cdr of the puzzle is: ~a" (cdr puzzle))
                     (if (solvable puzzle )
-                        ;(print "Puzzle is solvable")
                         (setf *start* puzzle)
                         
                         ;else
@@ -72,77 +77,57 @@ Modifications:
 					;ELSE make recursive call to allow the user to re-enter their puzzle 
                     (getPuzzle args )
 				)
-				 	
-			)
-			; usage case: (load '8puzzle) 
-			;             (8puzzle (puzzlelist)) or (8puzzle file_name )
-			((= (length args) 2)  ;if the user specified a puzzle file or entered a list as a command line argument
-                (print "args was 2" )
-	           (cond 
-		
-                    ((listp (cadr args ))  ; if a list is the second command line argument
-						(setf puzzle (cadr args))
-                        
-                        (when (solvable puzzle)
-                            (setf *start* puzzle)
-                            (print *start*)
-                        )
-                        
-                        (when (not (solvable puzzle) )
-                            (print "Puzzle is not solvable")
-                            nil ; return nil?
-                        )
-                    )
-                            
-  
-                    ((atomp (cdr args ))  ;if an atom is present in the cdr of args, assume it is a file name
-						;(setf file (caddr args))
-                        (setf file (cadr args))
-						(setf puzzle (read_Puzzle file))
-                        ;(print "cadr was not a list!")
-                        (when (solvable puzzle )
-                            ;put into *Start*
-                            (setf *start* puzzle)
-                            (print *start*)
-                        )
-                        
-                        (when (not (solvable puzzle) )
-                            ;else tell user that the puzzle is not solvable
-                            (print "Puzzle is not solvable")
-                            nil
-                        )
-                                                
-                    )  
-                )
-            )
+        
+        )
+        
 
-              ; usage case: clisp 8puzzle.lsp puzzlefile 
-            ((= (length args) 3)
-                (print "args was 3" )
-                (setf file (caddr args))
-                ;(print file)
-                (setf puzzle (read_Puzzle file))
-                
-                (when (solvable puzzle )
-                    ;put into *Start*
-                    (setf *start* puzzle)
-                    (print *start*)
+        (when (listp args)
+                (setf puzzle args)
+                (when (solvable puzzle)
+                        (setf *start* puzzle)
                 )
                 
                 (when (not (solvable puzzle) )
-                    ;else tell user that the puzzle is not solvable
-                    (print "Puzzle is not solvable")
-                    nil
+                        (print "Puzzle is not solvable")
+                        nil ; return nil?
                 )
-                
-            )							
-            
-                ;print usage for any other form of user input
-            (t   (print "DIDN'T WORK"));(printUsage) 
         )
+            
+            (when (stringp args)
+                (setf file args)
+                
+                (setf puzzle (read_Puzzle file))
+                    (when (solvable puzzle )
+                        ;put into *Start*
+                        (setf *start* puzzle)
+                    )
+                    
+                    (when (not (solvable puzzle) )
+                        ;else tell user that the puzzle is not solvable
+                        (print "Puzzle is not solvable")
+                        nil
+                    )
+            
+            
+            ) 
+            
+            
+        
+        
     )
 )
 
+
+#|*****************************************************************************
+  Function: read_Puzzle
+
+  Author: Alex Nienhueser
+
+  Description:  gets puzzle from user, either from file or list
+
+  Args:
+	filename:	name of file to be read
+*****************************************************************************|#
 (defun read_Puzzle ( filename )
 	(setf lst '())
 	
@@ -161,6 +146,16 @@ Modifications:
 	lst
 )
 
+#|*****************************************************************************
+  Function: read_Goal
+
+  Author: Alex Nienhueser
+
+  Description:  reads goal file. not currently used
+
+  Args:
+	none
+*****************************************************************************|#
 (defun read_Goal ()
 	(setf *Goal* '())
 	
@@ -173,6 +168,16 @@ Modifications:
     )
 )
 
+#|*****************************************************************************
+  Function: generate_Goal
+
+  Author: Alex Nienhueser
+
+  Description:  generates a goal state based on puzzle dimension. not used currently
+
+  Args:
+	none
+*****************************************************************************|#
 (defun generate_Goal ()
 	
 	(setf *Goal* ())
@@ -181,5 +186,3 @@ Modifications:
 	)
 )
 
-;(getPuz args)
-;(print 6)

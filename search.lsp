@@ -23,14 +23,7 @@
  
 *****************************************************************************|#
 
-#|*****************************************************************************
-  Structure: Node
 
-  Authors: Dr. John Weiss, Stephanie Athow
-
-  Description: Stores state, parent, and depth the state was generated
-*****************************************************************************|#
-	(defstruct node state parent depth)
 
 #|*****************************************************************************
   Function: equal-states
@@ -159,16 +152,24 @@
 	node-list:	list of expanded nodes
 *****************************************************************************|#
 (defun build-solution (node node-list)
-	(do
-		((path (list (node-state node))))        ; local loop var
-		((null (node-parent node)) path)         ; termination condition
 
-		; find the parent of the current node
-		(setf node (member-state (node-parent node) node-list))
+    (let (path_passed)
+        (do
+            ((path (list (node-state node))))        ; local loop var
+            ((null (node-parent node)) path)         ; termination condition
 
-		; add it to the path
-		(setf path (cons (node-state node) path))
-	)
+            ; find the parent of the current node
+            (setf node (member-state (node-parent node) node-list))
+
+            ; add it to the path
+            (setf path (cons (node-state node) path))
+            (setf path_passed path)
+        )
+        (format_output path_passed)
+        T
+        
+        
+    )
 )
 #|*****************************************************************************
   Function: member-state

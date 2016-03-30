@@ -10,22 +10,47 @@
     formatted list of positions, leading from the start state to the goal 
     state will be printed, as well as the number of moves required to reach
     the goal state, and the number of nodes generated and expanded 
+    
+    Bugs: the usage case "clisp 8puzzle puzzlelist" does not function correctly
+          the formatting for the user prompt for interactive input is ugly
 
 
 *****************************************************************************|#
-; Node structure for a*: stores state and parent and relevant data to a* .
+#|*****************************************************************************
+  Structure: starNode
+
+  Authors: Luke Meyer
+
+  Description: Stores state, parent, and relevant a* stuff
+*****************************************************************************|#
 (defstruct starNode state parent fN gN hN)
-; Node structure for dfid/bfs: stores state, parent and depth.
+
+#|*****************************************************************************
+  Structure: Node
+
+  Authors: Dr. John Weiss, Stephanie Athow
+
+  Description: Stores state, parent, and depth the state was generated
+*****************************************************************************|#
 (defstruct node state parent depth)
 
+;global variable to track moves
 (defvar *moveCount* 0)
+;global variable to track nodes generated
 (defvar *generatedCount* 0)
+;global variable to track nodes expanded
 (defvar *expandedCount* 0)
+;global variable to track distinct nodes generated
 (defvar *distinctNodes* 0)
+;global variable to track duplicate nodes generated
 (defvar *duplicateNodes* 0)
+;global variable to store the start state
 (defvar *start* nil)
+;global variable to store the goal state for a*
 (defvar *GOALSTATE* (make-starNode :state '(1 2 3 8 0 4 7 6 5) :parent nil :fN nil :gN nil :hN nil ) )
-(defvar *GOAL* (make-node :state '(1 2 3 8 0 4 7 6 5) ))
+;global variable to store the goal state for bfs and dfid
+(defvar *GOAL* '(1 2 3 8 0 4 7 6 5) )
+;global variable to store the puzzle dimension
 (defvar *n* 3)
 
 (load "AI_8Puzzle.lsp")
@@ -33,18 +58,38 @@
 (load "getPuzzle.lsp")
 
 
-(defun 8puzzle (args)
+#|*****************************************************************************
+  Function: 8puzzle
+
+  Author: Luke Meyer
+
+  Description:  main driver function for the program
+
+  Args:
+	args:	optional parameters
+*****************************************************************************|#
+(defun 8puzzle ( &optional (args 0) )
     
-    (getPuzzle args)      ; get them puzzlin' shitz and set start state
+    (getPuzzle args)      ; get them puzzlin states and set start state
     
+    (format t "~%~% BFS graph Search ~%")
     (search_bfs_dfs *start* 'bfs) ;run bfs
     
+    
+    (format t "~%~% DFID graph Search ~%")
     (search_dfid *start*)  ;run depth first search with iterated deepening
     
-    (aStar *start* ad1)   ; run a* with "number out of place" heuristic
-    
-    (aStar *start* ad2)   ; run a* with "manhattan distance" heuristic
-    
-    (aStar *start* inad1)   ; run a* with inadmissable heuristic
+
+    (format t "~%~% A* graph Search (heuristic: number out of place) ~%")    
+    (aStar *start* 'ad1)   ; run a* with "number out of place" heuristic
+
+
+    (format t "~%~% A* graph Search (heuristic: Manhattan Distance ) ~%")    
+    (aStar *start* 'ad2)   ; run a* with "manhattan distance" heuristic
+
+
+    (format t "~%~% A* graph Search (heuristic:  Nilsson's Sequence Score) ~%")    
+    (aStar *start* 'inad1)   ; run a* with inadmissable heuristic
+
 
 )

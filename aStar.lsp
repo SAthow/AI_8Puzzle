@@ -1,58 +1,47 @@
 
+#|**************************** ASTAR.LSP *************************************
 
-; Node structure: stores state and parent.
-	;(defstruct starNode state parent fN gN hN)
+ A* function that utilizes 2 admissable and 1 inadmissable heuristics, located
+ in AI_8Puzzle.lsp
 
- ;easy '(1 3 4 8 6 2 7 0 5) 
- ;medium '(2 8 1 0 4 3 7 6 5) 
-; hard'(2 8 1 4 6 3 0 7 5) 
-;tough '(2 1 3 8 0 4 6 7 5)
-;goal state (needs to be initialized depending on the size of the puzzle being solved)
-    ;(defvar *GOALSTATE* (make-starNode :state '(1 2 3 8 0 4 7 6 5)  :parent nil :fN nil :gN nil :hN nil ) )
+ Author: Luke Meyer
+ Written Spring 2016 
 
-    ;(defvar *START* (make-starNode :state '(2 1 3 8 0 4 6 7 5) :parent nil :fN nil :gN nil :hN nil) )
-    
-    ;(defvar *n* 3)
+ 
+*****************************************************************************|#
 
-; Test if two nodes have the same state.
-;	(defun equal-states (n1 n2) (equal (node-state n1) (node-state n2)))
-;------------------------------------------------------------------------------
-
-
-
-;------------------------------------------------------------------------------
-; Build-solution takes a state and a list of (state parent) pairs
-; and constructs the list of states that led to the current state
-; by tracing back through the parents to the start node (nil parent).
-;------------------------------------------------------------------------------
-;(defun build-solution (node node-list)
-;	(do
-;		((path (list (node-state node))))        ; local loop var
-;		((null (node-parent node)) path)         ; termination condition
-
-		; find the parent of the current node
-;		(setf node (member-state (node-parent node) node-list))
-
-		; add it to the path
-;		(setf path (cons (node-state node) path))
-;	)
-;)
-
-;(load "search.lsp" )
 (load "AI_8Puzzle.lsp" )
 
-; Member-state looks for a node on the node-list with the same state.
+#|*****************************************************************************
+  Function: mem-state
+
+  Author: Dr. John Weiss, slightly modified by Luke Meyer
+
+  Description: Looks for a node on the node-list with the same state.
+
+  Args:
+	state:		potential state generated
+	anode-list:	list of nodes, each node contains a state, parent of state and depth generated
+*****************************************************************************|#
 (defun mem-state (state anode-list)
 	(dolist (anode anode-list)
 	(when (equal state (starNode-state anode)) (return anode))
 	)
 )
 
-;------------------------------------------------------------------------------
-; Build-solution takes a state and a list of (state parent) pairs
-; and constructs the list of states that led to the current state
-; by tracing back through the parents to the start node (nil parent).
-;------------------------------------------------------------------------------
+#|*****************************************************************************
+  Function: solution-path
+
+  Author: Dr. John Weiss, slightly modified by Luke Meyer
+
+  Description: solution-path takes a state and a list of (state parent) pairs
+	and constructs the list of states that led to the current state
+	by tracing back through the parents to the start node (nil parent).
+
+  Args:
+	anode:		goal node with parent field pointing to successor
+	anode-list:	list of expanded nodes
+*****************************************************************************|#
 (defun solution-path(anode anode-list)
     ;(print anode-list )
     
@@ -84,11 +73,32 @@
     )
 )
 
+#|*****************************************************************************
+  Function: matching-states
+
+  Author: Dr. John Weiss, slighly modified by Luke Meyer
+
+  Description:  Test if two nodes have the same state.
+
+  Args:
+	n1:	node 1
+	n2: node 2
+*****************************************************************************|#
 (defun matching-states (n1 n2)
     (equal (starNode-state n1) (starNode-state n2) ) 
 )
 
 
+#|*****************************************************************************
+  Function: BestSuccessor
+
+  Author: Luke Meyer
+
+  Description:  Returns the "best" successor in the OPEN list, based on the current heuristic
+
+  Args:
+	OPEN:	list of un-expanded nodes
+*****************************************************************************|#
 (defun BestSuccessor (OPEN) ;
     (let ((minf 100000)
          (minfpos -1)) ; declare local variables
@@ -114,32 +124,42 @@
 )
 
 
+#|*****************************************************************************
+  Function: BestSuccessor
+
+  Author: Luke Meyer
+
+  Description:  Returns the "best" successor in the OPEN list, based on the current heuristic
+
+  Args:
+	start:	start state of puzzle
+    heuristic: flag to tell what heuristic is being applied to the a* run
+*****************************************************************************|#
 (defun aStar (start heuristic)
     (setf *distinctNodes* 0)
     (setf *generatedCount* 0)
     (setf *expandedCount* 0)
     (let 
         (   ; local variables
-            (n 3) ; TODO: get from input, not constant 3
+            (n 3) 
             (currNode (make-starNode :state start :parent nil :fN 0 :gN 0 :hN 0 ) )
             (OPEN nil)
             (CLOSED nil)
             (tempNode (make-starNode :state nil :parent nil :fN 0 :gN 0 :hN 0 ) )
         )
         
-           ;(print 1)
-        ;(setf (starNode-hN currNode) (inad1 (starNode-state currNode) )) ; set the hN value for current node, n = 3 for now
-        (cond
+
+        (cond   ; set the hN value for current node
             ((eq heuristic 'ad1)
-                (setf (starNode-hN currNode) (ad1 (starNode-state currNode) )) ; set the hN value for current node, n = 3 for now
+                (setf (starNode-hN currNode) (ad1 (starNode-state currNode) ))
             )
             
             ((eq heuristic 'ad2)
-                (setf (starNode-hN currNode) (ad2 (starNode-state currNode) )) ; set the hN value for current node, n = 3 for now
+                (setf (starNode-hN currNode) (ad2 (starNode-state currNode) ))
             )
             
             ((eq heuristic 'inad1)
-                (setf (starNode-hN currNode) (inad1 (starNode-state currNode) )) ; set the hN value for current node, n = 3 for now
+                (setf (starNode-hN currNode) (inad1 (starNode-state currNode) )) 
             )   
         )
 
@@ -164,17 +184,17 @@
                 ;initialize the child node
                (setf child (make-starNode :state child :parent (starNode-state currNode) :gN (1+ (starNode-gN currNode ))))
                 ;set child hN
-               (cond
+               (cond   
                  ((eq heuristic 'ad1)
-                    (setf (starNode-hN child) (ad1 (starNode-state child) )) ; set the hN value for current node, n = 3 for now
+                    (setf (starNode-hN child) (ad1 (starNode-state child) )) 
                  )
             
                  ((eq heuristic 'ad2)
-                    (setf (starNode-hN child) (ad2 (starNode-state child) )) ; set the hN value for current node, n = 3 for now
+                    (setf (starNode-hN child) (ad2 (starNode-state child) )) 
                  )
             
                  ((eq heuristic 'inad1)
-                    (setf (starNode-hN child) (inad1 (starNode-state child) )) ; set the hN value for current node, n = 3 for now
+                    (setf (starNode-hN child) (inad1 (starNode-state child) )) 
                  )   
                 )
 
@@ -216,17 +236,14 @@
                         (setf *distinctNodes* (1+ *distinctNodes* ))  ; increment the distinct node counter 
 
                     )
-                 )
-                    
-                   
+                 )   
                  
                  
               )
-                ;(print 6)
+
             )
             nil ; return nil if success not returned prior
         )      
     
 )
 
-;(aStar *START*)

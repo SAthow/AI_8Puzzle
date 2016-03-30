@@ -1,19 +1,11 @@
-#|**************************************************************************
+#|**************************** AI_8PUZZLE.LSP *************************************
 
- Author: Stephanie Athow, Luke Meyer, Alex Nienhueser
+ The functions found within this file are general utility functions, including
+ generate-successors and the heuristic functions used in a*
 
-
- Description: This program is design to solve an 8-puzzle using BFS 
-   (breadth first search), DFID (depth first iterated deepening), and A*.
-    The start position may be specified in a puzzle file, or via promts.
-    After solving the puzzle with each search algorithm, a nicely 
-    formatted list of positions, leading from the start state to the goal 
-    state will be printed. As well as the number of moves required to reach
-    the goal state, and the number of nodes generated and expanded 
-    (i.e., the number placed on the OPEN and CLOSED lists, respectively). 
-    This will provide a rough metric for search algorithm efficiency.
-
-
+ Author: Stephanie Athow, Alex Nienhueser
+ Written Spring 2016 
+ 
 *****************************************************************************|#
 
 ;(defvar *start* '())
