@@ -33,7 +33,7 @@
 (load "search.lsp")
 
 
-(defun main 
+;(defun main 
 
 
 
@@ -85,25 +85,25 @@ Function: generate-successors
 		(when (and (>= (mod pos *n*) 0)
 			 (not (eq pos 0) ))
 			(setf left (Swp state pos -1) )
-			(1+ *generatedCount*)
+			(setf *generatedCount* (1+ *generatedCount*) )
 		)
 
 		;Determine if the right sucessor can be generated
 		(when (< (mod pos *n*) (- *n* 1))
 			(setf right (Swp state pos 1 ) )
-			(1+ *generatedCount*)
+			(setf *generatedCount* (1+ *generatedCount*) )
 		)
 
 		;Determine if the up sucessor can be generated 
 		(when (>= (/ pos (float *n*)) 1)
 			(setf up (Swp state pos (- 0 *n* ) ) )
-			(1+ *generatedCount*) 
+			(setf *generatedCount* (1+ *generatedCount*) ) 
 		)
 
 		;Determine if the down sucessor can be generated
 		(when (< (/ pos (float *n*)) (- *n* 1))
 			(setf down (Swp state pos *n* ) )
-			(1+ *generatedCount*)
+			(setf *generatedCount* (1+ *generatedCount*) )
 		)
 		
 		(setf successors (list left right up down) )
@@ -209,7 +209,7 @@ Function: generate-successors
 				)
 			)
 		)
-		(+ ad2 (* total 3))
+		(+ (ad2 state) (* total 3))
 	)
 )
 
