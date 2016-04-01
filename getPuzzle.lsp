@@ -58,8 +58,8 @@ Modifications:
 *****************************************************************************|#
 (defun getPuzzle (args) 
 	(let (file puzzle)
-       
-        (when (= args 0 )
+       (print args)
+        (when (= (length args) 0 )
 
             (print "Please enter a permutation of the digits 0-8, separating each by a space; 0 denotes the blank tile: ")
                 
@@ -77,11 +77,10 @@ Modifications:
 					;ELSE make recursive call to allow the user to re-enter their puzzle 
                     (getPuzzle args )
 				)
-        
         )
         
 
-        (when (listp args)
+        #|(when   (listp args)
                 (setf puzzle args)
                 (when (solvable puzzle)
                         (setf *start* puzzle)
@@ -92,9 +91,23 @@ Modifications:
                         nil ; return nil?
                 )
         )
+        |#
+         (when (= (length args) 9)
+                (setf puzzle args)
+                (when (solvable puzzle)
+                        (setf *start* puzzle)
+                )
+                
+                (when (not (solvable puzzle) )
+                        (print "Puzzle is not solvable")
+                        nil ; return nil?
+                )
+            )
             
+            #|
             (when (stringp args)
                 (setf file args)
+                
                 
                 (setf puzzle (read_Puzzle file))
                     (when (solvable puzzle )
@@ -106,10 +119,29 @@ Modifications:
                         ;else tell user that the puzzle is not solvable
                         (print "Puzzle is not solvable")
                         nil
+                    ) 
+            
+            )
+|#
+
+            (when (= (length args) 1)
+                (setf file (nth 0 args) ) 
+                
+                (setf puzzle (read_Puzzle file))
+                    (when (solvable puzzle )
+                        ;put into *Start*
+                        (setf *start* puzzle)
                     )
+                    
+                    (when (not (solvable puzzle) )
+                        ;else tell user that the puzzle is not solvable
+                        (print "Puzzle is not solvable")
+                        nil
+                    ) 
             
-            
-            ) 
+            )
+
+                  
             
             
         

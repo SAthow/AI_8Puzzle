@@ -11,8 +11,7 @@
     state will be printed, as well as the number of moves required to reach
     the goal state, and the number of nodes generated and expanded 
     
-    Bugs: the usage case "clisp 8puzzle puzzlelist" does not function correctly
-          the formatting for the user prompt for interactive input is ugly
+    Bugs: none known
 
 
 *****************************************************************************|#
@@ -68,7 +67,9 @@
   Args:
 	args:	optional parameters
 *****************************************************************************|#
-(defun 8puzzle ( &optional (args 0) )
+(defun 8puzzle ( &optional (args nil) )
+
+    ;(when ( equal args nil) (return-from 8puzzle nil ))
     
     (getPuzzle args)      ; get them puzzlin states and set start state
     
@@ -93,3 +94,13 @@
 
 
 )
+
+(defun cmdline_8puz ()
+    (if (not (null *args*) )
+        (8puzzle *args*)
+    )
+)
+(print *args*)
+
+;(8puzzle *args*)
+(cmdline_8puz)

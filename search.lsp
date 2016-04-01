@@ -163,6 +163,9 @@
 
             ; add it to the path
             (setf path (cons (node-state node) path))
+            
+            (setf *moveCount* (1-(length path)))
+            
             (setf path_passed path)
         )
         (format_output path_passed)
